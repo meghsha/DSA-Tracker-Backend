@@ -1,4 +1,5 @@
 import asyncHandler from "express-async-handler";
+import mongoose from "mongoose";
 import UserProgress from "../modals/userProgressSchema.js";
 import Problem from "../modals/problemSchema.js";
 

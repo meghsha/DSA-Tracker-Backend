@@ -65,10 +65,11 @@ export const loginUser = asyncHandler(async (req, res) => {
     throw new BadRequestError("Invalid password");
   }
 
-  generateToken(res, { id: user._id, email: user.email });
+  const token = generateToken(res, { id: user._id, email: user.email });
 
   res.status(200).json({
     message: "Login successful",
+    accessToken: token,
     user: {
       _id: user._id,
       name: user.name,
