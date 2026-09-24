@@ -12,6 +12,7 @@ import chapterRoute from "./routes/chapterRoutes.js";
 import topicRoute from "./routes/topicRoutes.js";
 import problemRoute from "./routes/problemRoutes.js";
 import progressRoute from "./routes/progressRoutes.js";
+import studyPlanRoute from "./routes/studyPlanRoutes.js";
 
 const app = express();
 
@@ -45,6 +46,7 @@ app.use("/api/chapters", chapterRoute);
 app.use("/api/topics", topicRoute);
 app.use("/api/problems", problemRoute);
 app.use("/api/progress", progressRoute);
+app.use("/api/study-plans", studyPlanRoute);
 
 // Error handler
 app.use(errorHandler);
