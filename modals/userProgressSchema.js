@@ -12,9 +12,10 @@ const userProgressSchema = new mongoose.Schema(
       ref: "Problem",
       required: true,
     },
-    completed: {
-      type: Boolean,
-      default: false,
+    status: {
+      type: String,
+      enum: ['not_started', 'in_progress', 'completed'],
+      default: 'not_started',
     },
     completedAt: {
       type: Date,

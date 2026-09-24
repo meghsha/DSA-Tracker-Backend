@@ -5,21 +5,28 @@ import Problem from "../modals/problemSchema.js";
 
 export const updateProgress = asyncHandler(async (req, res) => {
   const { problemId } = req.params;
-  const { completed } = req.body;
+  const { status } = req.body;
   const userId = req.user._id;
 
-  // Validate problemId is a valid ObjectId (Mongoose will cast, but we can check)
+  // Validate problemId is a valid ObjectId
   if (!mongoose.Types.ObjectId.isValid(problemId)) {
     res.status(400);
     throw new Error("Invalid problem ID");
+  }
+
+  // Validate status
+  const validStatuses = ['not_started', 'in_progress', 'completed'];
+  if (!validStatuses.includes(status)) {
+    res.status(400);
+    throw new Error("Invalid status");
   }
 
   const progress = await UserProgress.findOneAndUpdate(
     { userId, problemId },
     {
       $set: {
-        completed: !!completed,
-        completedAt: !!completed ? new Date() : null,
+        status,
+        completedAt: status === 'completed' ? new Date() : null,
       },
     },
     { upsert: true, new: true }
@@ -37,8 +44,10 @@ export const getProgress = asyncHandler(async (req, res) => {
   // Get total number of problems
   const totalProblems = await Problem.countDocuments({});
 
-  // Count completed problems
-  const completedCount = progressRecords.filter(p => p.completed).length;
+  // Count completed problems (status === 'completed')
+  const completedCount = progressRecords.filter(p => p.status === 'completed').length;
+  // Count in progress problems (status === 'in_progress')
+  const inProgressCount = progressRecords.filter(p => p.status === 'in_progress').length;
 
   const percentage = totalProblems > 0 ? Math.round((completedCount / totalProblems) * 100) : 0;
 
@@ -46,6 +55,7 @@ export const getProgress = asyncHandler(async (req, res) => {
     progress: progressRecords,
     summary: {
       completed: completedCount,
+      inProgress: inProgressCount,
       total: totalProblems,
       percentage,
     },
